@@ -1,99 +1,244 @@
-CPF = None # definindo variável CPF
-senha = None # definindo variável nome
+CPF = None
+senha = None
 
 def cadastroUsuario():
-    CPF = input("Digite o seu CPF: ") # solicita o cpf ao usuário
+    CPF = input("Digite o seu CPF: ")
 
-    while True: # executa enquanto o usuario nao digitar uma senha de 6 digitos
-        senha = input("Digite a sua senha: ") # solicita uma senha ao usuário
+    while True:
+        senha = input("Digite a sua senha: ")
 
-        if len(senha) == 6 and senha.isdigit(): # verifica se a senha contém 6 dígitos com o len() e se são numeros com o isdigit()
-            break # sai do loop se a condicao acima for verdadeira
-        else: # se a condicao for falsa executa
-            print("A senha deve conter 6 números. Digite novamente.") # exibe mensagem dizendo que a senha deve conter 6 numeros
+        if len(senha) == 6 and senha.isdigit():
+            break
+        else:
+            print("A senha deve conter 6 números. Digite novamente.")
 
-    nome = input("Digite o seu nome: ") # solicita o nome ao usuário
-    bd = open("bd.txt","a") # abre o arquivo .txt que possui os dados dos usuários
-    bd.write(f"{CPF},{nome},{senha}\n") # faz o registro dos dados digitados no arquivo .txt
-    print("Cadastrado") # exibe mensagem de cadastro efetuado
+    nome = input("Digite o seu nome: ")
+
+    reais = 580.00
+    bitcoin = 0.0158
+    ethereum = 1.03
+    ripple = 200.35
+
+    bd = open("bd.txt", "a")
+    bd.write(f"{CPF},{nome},{senha},{reais},{bitcoin},{ethereum},{ripple}\n")
+    print("Cadastrado")
+
+usuariologado = {
+    "CPF": None,
+    "nome": None,
+    "senha": None
+}
+
+
+
+
 
 def loginUsuario():
-    CPF = input("Digite o seu CPF: ") # solicita o cpf ao usuário
-    senha = input("Digite a sua senha: ") # solicita a senha ao usuário
-    bd = open("bd.txt") # abre o arquivo .txt que possui os dados dos usuários
+    CPF = input("Digite o seu CPF: ")
+    senha = input("Digite a sua senha: ")
+    bd = open("bd.txt")
 
-    try: # tenta executar o código sem erros (se houver erro ele executa o except)
-        for linha in bd: # itera cada linha do arquivo bd.txt aberto anteriormente com o open()
-            CPFbd, nome, senhabd = linha.strip().split(',') # descompacta a lista de dados em variáveis individuais
+    try:
+        for linha in bd:
+            CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
             
-            if CPF == CPFbd and senha == senhabd: # verifica se o CPF e a senha estão corretos
-                print(f"Olá, {nome}!") # exibe mensagem de olá ao usuário 
-                menuGeral() # chama a função do menu pós login 
-                return # encerra a execução função
-        print("CPF ou senha incorretos.") # exibe mensagem de CPF ou senha incorretos caso a condição de cima for falsa
+            if CPF == CPFbd and senha == senhabd:
+                print(f"Olá, {nome}!")
+                usuariologado["CPF"] = CPF
+                usuariologado["nome"] = nome
+                usuariologado["senha"] = senhabd
+                menuGeral()
+                return
+        print("CPF ou senha incorretos.")
 
-    except FileNotFoundError: # se o arquivo de dados dos usuários não for encontrado
-        print("O arquivo de registros não foi encontrado.") # exibe mensagem de arquivo não encontrado
+    except FileNotFoundError:
+        print("O arquivo de registros não foi encontrado.")
+
+
+
 
 
 def consultarSaldo():
-    pass
+    senha = input("Digite a sua senha: ")
+
+    if senha != usuariologado["senha"]:
+        print("Senha incorreta. Tente novamente.")
+        menuGeral()
+        return
+    
+    bd = open("bd.txt", "r")
+    for linha in bd:
+        CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
+
+        if senha == senhabd:
+            print("Seu saldo: \n")
+            print(f"Nome: {nome}")
+            print(f"CPF: {CPFbd}")
+            print(f"Reais: {float(reais):.2f}")
+            print(f"Bitcoin: {float(bitcoin):.4f}")
+            print(f"Ethereum: {float(ethereum):.2f}")
+            print(f"Ripple: {float(ripple):.2f}")
+            bd.close()
+            return
+
+    bd.close()
+
+
+
+
 
 def consultarExtrato():
     pass
 
+
+
+
+
 def depositar():
-    pass
+    senha = input("Digite a sua senha: ")
+
+    if senha != usuariologado["senha"]:
+        print("Senha incorreta. Tente novamente.")
+        menuGeral()
+        return
+
+    valordeposito = float(input("Digite qual o valor do depósito: "))
+
+    with open("bd.txt", "r") as bd:
+        linhas = bd.readlines()
+
+    with open("bd.txt", "w") as bd:
+        for linha in linhas:
+            CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
+
+            if CPFbd == usuariologado["CPF"]:
+                
+                novosaldoreais = float(reais) + valordeposito
+                
+                print("Depósito realizado com sucesso.")
+
+                bd.write(f"{CPFbd},{nome},{senhabd},{novosaldoreais},{bitcoin},{ethereum},{ripple}\n")
+
+                print("Seu saldo atualizado:\n")
+                print(f"Nome: {nome}")
+                print(f"CPF: {CPFbd}")
+                print(f"Reais: {float(novosaldoreais):.2f}")
+                print(f"Bitcoin: {float(bitcoin):.4f}")
+                print(f"Ethereum: {float(ethereum):.2f}")
+                print(f"Ripple: {float(ripple):.2f}")
+            else:
+                bd.write(linha) # reescreve o registro dos outros usuários
+
+
+
+
 
 def sacar():
-    pass
+    senha = input("Digite a sua senha: ")
+
+    if senha != usuariologado["senha"]:
+        print("Senha incorreta. Tente novamente.")
+        menuGeral()
+        return
+
+    valorsaque = float(input("Digite o valor que deseja sacar: "))
+
+    with open("bd.txt", "r") as bd:
+        linhas = bd.readlines()
+
+    with open("bd.txt", "w") as bd:
+        for linha in linhas:
+            CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
+
+            if CPFbd == usuariologado["CPF"]:
+                saldo = float(reais)
+
+                if saldo < valorsaque:
+                    print(f"Você não possui saldo suficiente. Seu saldo: {saldo:.2f}")
+                    bd.write(linha)  # escreve a linha original sem alterações
+                    menuGeral()
+                else:
+                    novosaldo = saldo - valorsaque
+                    print(f"\nSaque realizado com sucesso.")
+
+                    bd.write(f"{CPFbd},{nome},{senhabd},{novosaldo},{bitcoin},{ethereum},{ripple}\n")
+
+                    print("Seu saldo atualizado:\n")
+                    print(f"Nome: {nome}")
+                    print(f"CPF: {CPFbd}")
+                    print(f"Reais: {float(novosaldo):.2f}")
+                    print(f"Bitcoin: {float(bitcoin):.4f}")
+                    print(f"Ethereum: {float(ethereum):.2f}")
+                    print(f"Ripple: {float(ripple):.2f}")
+            else:
+                bd.write(linha) # reescreve o registro dos outros usuários
+
+
+
+
 
 def comprarCripto():
     pass
 
+
+
+
+
 def venderCripto():
     pass
+
+
+
+
 
 def atualizarCotacao():
     pass
 
+
+
+
+
 def sair():
+    print("Saindo...")
     exit
 
+
+
+
+
 def menuGeral():
-    opcoes = { # criando dicionário com as opcoes
-         "1.":"Consultar saldo",
-         "2.":"Consultar extrato",
-         "3.":"Depositar",
-         "4.":"Sacar",
-         "5.":"Comprar criptomoedas",
-         "6.":"Vender criptomoedas",
-         "7.":"Atualizar cotação",
-         "8.":"Sair", # definindo chaves(numero da opcao) e valores(opcao) das opcoes no dicionario
+    opcoes = {
+         "1.": "Consultar saldo",
+         "2.": "Consultar extrato",
+         "3.": "Depositar",
+         "4.": "Sacar",
+         "5.": "Comprar criptomoedas",
+         "6.": "Vender criptomoedas",
+         "7.": "Atualizar cotação",
+         "8.": "Sair",
     }
 
-    for numero, opcao in opcoes.items(): # loop para percorrer os pares de chave e valor do dicionario opcoes
-        print(f"{numero} {opcao}") # imprime o numero da opcao e a opcao
+    for numero, opcao in opcoes.items():
+        print(f"{numero} {opcao}")
 
-    opcao = input() # recebe o numero da opcao desejada pelo usuario
+    opcao = input()
 
-    if opcao == 1: # se opcao for 1 executa a funcao consultarSaldo()
+    if opcao == "1":
         consultarSaldo()
-    elif opcao == 2: # se opcao for 2 executa a funcao consultarExtrato()
+    elif opcao == "2":
         consultarExtrato()
-    elif opcao == 3: # se opcao for 3 executa a funcao depositar()
+    elif opcao == "3":
         depositar()
-    elif opcao == 4: # se opcao for 4 executa a funcao sacar()
+    elif opcao == "4":
         sacar()
-    elif opcao == 5: # se opcao for 5 executa a funcao comprarCripto()
+    elif opcao == "5":
         comprarCripto()
-    elif opcao == 6: # se opcao for 6 executa a funcao venderCripto()
+    elif opcao == "6":
         venderCripto()
-    elif opcao == 7: # se opcao for 7 executa a funcao atualizarCotacao()
+    elif opcao == "7":
         atualizarCotacao()
-    elif opcao == 8: # se opcao for 8 executa a funcao sair() que finaliza a execucao do programa
+    elif opcao == "8":
         sair()
-
 
 def main():
     loginUsuario()
