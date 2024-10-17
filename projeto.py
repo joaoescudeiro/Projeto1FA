@@ -239,6 +239,10 @@ def menuGeral():
         atualizarCotacao()
     elif opcao == "8":
         sair()
+    else:
+        print("Escolha uma das opções.")
+        menuGeral()
+        return
 
 def main():
     loginUsuario()
