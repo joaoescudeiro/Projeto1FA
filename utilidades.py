@@ -1,7 +1,15 @@
 import datetime
+from random import uniform
 
 CPF = None
 senha = None
+
+usuariologado = {
+    "CPF": None,
+    "nome": None,
+    "senha": None
+}
+
 
 def cadastroUsuario():
     CPF = input("Digite o seu CPF: ")
@@ -25,15 +33,6 @@ def cadastroUsuario():
     bd.write(f"{CPF},{nome},{senha},{reais},{bitcoin},{ethereum},{ripple}\n")
     print("Cadastrado")
 
-usuariologado = {
-    "CPF": None,
-    "nome": None,
-    "senha": None
-}
-
-
-
-
 
 def loginUsuario():
     CPF = input("Digite o seu CPF: ")
@@ -49,7 +48,7 @@ def loginUsuario():
                 usuariologado["CPF"] = CPF
                 usuariologado["nome"] = nome
                 usuariologado["senha"] = senhabd
-                menuGeral()
+                menu()
                 return
         print("CPF ou senha incorretos.")
 
@@ -57,7 +56,43 @@ def loginUsuario():
         print("O arquivo de registros não foi encontrado.")
 
 
+def menu():
+    opcoes = {
+         "1.": "Consultar saldo",
+         "2.": "Consultar extrato",
+         "3.": "Depositar",
+         "4.": "Sacar",
+         "5.": "Comprar criptomoedas",
+         "6.": "Vender criptomoedas",
+         "7.": "Atualizar cotação",
+         "8.": "Sair",
+    }
 
+    for numero, opcao in opcoes.items():
+        print(f"{numero} {opcao}")
+
+    opcao = input()
+
+    if opcao == "1":
+        consultarSaldo()
+    elif opcao == "2":
+        consultarExtrato()
+    elif opcao == "3":
+        depositar()
+    elif opcao == "4":
+        sacar()
+    elif opcao == "5":
+        comprarCripto()
+    elif opcao == "6":
+        venderCripto()
+    elif opcao == "7":
+        atualizarCotacao()
+    elif opcao == "8":
+        sair()
+    else:
+        print("Número digitado não pertence a nenhuma opção.")
+        return
+    
 
 
 def consultarSaldo():
@@ -67,7 +102,7 @@ def consultarSaldo():
     if senha != usuariologado["senha"]:
         print("Senha incorreta. Tente novamente.")
         return
-    
+
     bd = open("bd.txt", "r")
     for linha in bd:
         CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
@@ -84,9 +119,6 @@ def consultarSaldo():
             return
 
     bd.close()
-
-
-
 
 
 def consultarExtrato():
@@ -111,9 +143,6 @@ def consultarExtrato():
                         print(linha_extrato.strip())
                 return
     print("Extrato não encontrado.")
-
-
-
 
 
 def depositar():
@@ -160,9 +189,6 @@ def depositar():
                                   f"BTC: {float(bitcoin):.4f} ETH: {float(ethereum):.2f} XRP: {float(ripple):.2f}\n")
             else:
                 bd.write(linha) # reescreve o registro dos outros usuários
-
-
-
 
 
 def sacar():
@@ -217,9 +243,6 @@ def sacar():
                 bd.write(linha) # reescreve o registro dos outros usuários
 
 
-
-
-
 def comprarCripto():
     senha = input("Digite a sua senha: ")
 
@@ -227,9 +250,13 @@ def comprarCripto():
         print("Senha incorreta. Tente novamente.")
         return
 
-    cotacao_btc = 377767.29
-    cotacao_eth = 14279.99
-    cotacao_xrp = 2.99
+    arquivocotacao = open("cotacao.txt", "r")
+    for linha in arquivocotacao:
+        cotacao_btc, cotacao_eth, cotacao_xrp = linha.strip().split(",")
+
+    cotacao_btc = float(cotacao_btc)
+    cotacao_eth = float(cotacao_eth)
+    cotacao_xrp = float(cotacao_xrp)
 
     print(f"Cotações:\nBTC: {cotacao_btc} REAL\nETH: {cotacao_eth} REAL\nXRP: {cotacao_xrp} REAL")
 
@@ -299,9 +326,6 @@ def comprarCripto():
                 bd.write(linha)
 
 
-
-
-
 def venderCripto():
     senha = input("Digite a sua senha: ")
 
@@ -309,9 +333,13 @@ def venderCripto():
         print("Senha incorreta. Tente novamente.")
         return
 
-    cotacao_btc = 377767.29
-    cotacao_eth = 14279.99
-    cotacao_xrp = 2.99
+    arquivocotacao = open("cotacao.txt", "r")
+    for linha in arquivocotacao:
+        cotacao_btc, cotacao_eth, cotacao_xrp = linha.strip().split(",")
+
+    cotacao_btc = float(cotacao_btc)
+    cotacao_eth = float(cotacao_eth)
+    cotacao_xrp = float(cotacao_xrp)
 
     print(f"Cotações:\nBTC: {cotacao_btc} REAL\nETH: {cotacao_eth} REAL\nXRP: {cotacao_xrp} REAL")
 
@@ -359,7 +387,7 @@ def venderCripto():
                     ripple = float(ripple) - (valor_venda / cotacao_xrp)
 
                 bd.write(f"{CPFbd},{nome},{senhabd},{novosaldo},{bitcoin},{ethereum},{ripple}\n")
-                print(f"Venda realizada com sucesso! Taxa aplicada: {taxa * 100}%")
+                print(f"Venda realizada com sucesso. Taxa aplicada: {taxa * 100}%")
                 print(f"Seu saldo atualizado:")
                 print(f"Nome: {nome}")
                 print(f"CPF: {CPFbd}")
@@ -388,62 +416,37 @@ def venderCripto():
                 bd.write(linha)
 
 
-
-
-
 def atualizarCotacao():
-    pass
+    arquivocotacao = open("cotacao.txt", "r")
+    for linha in arquivocotacao:
+        cotacaobtc, cotacaoeth, cotacaoxrp = linha.strip().split(",")
 
+    cotacaobtc = float(cotacaobtc)
+    cotacaoeth = float(cotacaoeth)
+    cotacaoxrp = float(cotacaoxrp)
 
+    cotacaobtcmax = cotacaobtc+cotacaobtc*0.05
+    cotacaobtcmin = cotacaobtc-cotacaobtc*0.05
+    novacotacao_btc = round(uniform(cotacaobtcmin,cotacaobtcmax),2)
+
+    cotacaoethmax = cotacaoeth+cotacaoeth*0.05
+    cotacaoethmin = cotacaoeth-cotacaoeth*0.05
+    novacotacao_eth = round(uniform(cotacaoethmin,cotacaoethmax),2)
+
+    cotacaoxrpmax = cotacaoxrp+cotacaoxrp*0.05
+    cotacaoxrpmin = cotacaoxrp-cotacaoxrp*0.05
+    novacotacao_xrp = round(uniform(cotacaoxrpmin,cotacaoxrpmax),2)
+
+    with open(f"cotacao.txt", "w") as cotacao:
+        cotacao.write(f"{novacotacao_btc},{novacotacao_eth},{novacotacao_xrp}")
+
+    print(f"Cotações atualizadas:\n")
+    print(f"BTC: {novacotacao_btc} REAL")
+    print(f"ETH: {novacotacao_eth} REAL")
+    print(f"XRP: {novacotacao_xrp} REAL")
 
 
 
 def sair():
     print("Saindo...")
     exit
-
-
-
-
-
-def menuGeral():
-    opcoes = {
-         "1.": "Consultar saldo",
-         "2.": "Consultar extrato",
-         "3.": "Depositar",
-         "4.": "Sacar",
-         "5.": "Comprar criptomoedas",
-         "6.": "Vender criptomoedas",
-         "7.": "Atualizar cotação",
-         "8.": "Sair",
-    }
-
-    for numero, opcao in opcoes.items():
-        print(f"{numero} {opcao}")
-
-    opcao = input()
-
-    if opcao == "1":
-        consultarSaldo()
-    elif opcao == "2":
-        consultarExtrato()
-    elif opcao == "3":
-        depositar()
-    elif opcao == "4":
-        sacar()
-    elif opcao == "5":
-        comprarCripto()
-    elif opcao == "6":
-        venderCripto()
-    elif opcao == "7":
-        atualizarCotacao()
-    elif opcao == "8":
-        sair()
-    else:
-        print("Número digitado não pertence a nenhuma opção.")
-        return
-
-def main():
-    loginUsuario()
-    # cadastroUsuario()
-main()
