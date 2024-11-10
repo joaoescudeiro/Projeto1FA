@@ -182,13 +182,13 @@ def depositar():
                 cotacao = 0.0
                 taxa = 0.00
 
-                # cria ou atualiza o arquivo de extrato
+                
                 with open(f"extrato_{CPFbd}.txt", "a") as extrato:
                     extrato.write(f"{data} {tipotransacao} {valordeposito:.2f} REAL "
                                   f"CT: {cotacao:.2f} TX: {taxa:.2f} REAL: {novosaldoreais:.2f} "
                                   f"BTC: {float(bitcoin):.4f} ETH: {float(ethereum):.2f} XRP: {float(ripple):.2f}\n")
             else:
-                bd.write(linha) # reescreve o registro dos outros usuários
+                bd.write(linha) 
 
 
 def sacar():
@@ -212,7 +212,7 @@ def sacar():
 
                 if saldo < valorsaque:
                     print(f"Você não possui saldo suficiente. Seu saldo: {saldo:.2f}")
-                    bd.write(linha)  # escreve a linha original sem alterações
+                    bd.write(linha)  
                     exit
                     
                 else:
@@ -234,13 +234,13 @@ def sacar():
                     cotacao = 0.0
                     taxa = 0.00
 
-                    # cria ou atualiza o arquivo de extrato
+                    
                     with open(f"extrato_{CPFbd}.txt", "a") as extrato:
                         extrato.write(f"{datahora} {tipotransacao} {valorsaque:.2f} REAL "
                                       f"CT: {cotacao:.2f} TX: {taxa:.2f} REAL: {novosaldo:.2f} "
                                       f"BTC: {float(bitcoin):.4f} ETH: {float(ethereum):.2f} XRP: {float(ripple):.2f}\n")
             else:
-                bd.write(linha) # reescreve o registro dos outros usuários
+                bd.write(linha) 
 
 
 def comprarCripto():
@@ -252,13 +252,13 @@ def comprarCripto():
 
     arquivocotacao = open("cotacao.txt", "r")
     for linha in arquivocotacao:
-        cotacao_btc, cotacao_eth, cotacao_xrp = linha.strip().split(",")
+        cotacaobtc, cotacaoeth, cotacaoxrp = linha.strip().split(",")
 
-    cotacao_btc = float(cotacao_btc)
-    cotacao_eth = float(cotacao_eth)
-    cotacao_xrp = float(cotacao_xrp)
+    cotacaobtc = float(cotacaobtc)
+    cotacaoeth = float(cotacaoeth)
+    cotacaoxrp = float(cotacaoxrp)
 
-    print(f"Cotações:\nBTC: {cotacao_btc} REAL\nETH: {cotacao_eth} REAL\nXRP: {cotacao_xrp} REAL")
+    print(f"Cotações:\nBTC: {cotacaobtc} REAL\nETH: {cotacaoeth} REAL\nXRP: {cotacaoxrp} REAL")
 
     cripto = input("Qual criptomoeda deseja comprar? (BTC/ETH/XRP): ").upper()
     if cripto not in ["BTC", "ETH", "XRP"]:
@@ -267,7 +267,7 @@ def comprarCripto():
 
     valor_compra = float(input("Digite o valor em reais que deseja usar na compra: "))
     
-    taxa = 0.02  # 2% de taxa de compra
+    taxa = 0.02  
     valor_final = valor_compra - (valor_compra * taxa)
 
     with open("bd.txt", "r") as bd:
@@ -286,14 +286,14 @@ def comprarCripto():
                         bd.write(linha)
                     return
                 
-                # atualiza saldo e criptomoeda
+                
                 novosaldo = saldo - valor_compra
                 if cripto == "BTC":
-                    bitcoin = float(bitcoin) + (valor_final / cotacao_btc)
+                    bitcoin = float(bitcoin) + (valor_final / cotacaobtc)
                 elif cripto == "ETH":
-                    ethereum = float(ethereum) + (valor_final / cotacao_eth)
+                    ethereum = float(ethereum) + (valor_final / cotacaoeth)
                 elif cripto == "XRP":
-                    ripple = float(ripple) + (valor_final / cotacao_xrp)
+                    ripple = float(ripple) + (valor_final / cotacaoxrp)
 
                 bd.write(f"{CPFbd},{nome},{senhabd},{novosaldo},{bitcoin},{ethereum},{ripple}\n")
                 print(f"Compra realizada com sucesso. Taxa aplicada: {taxa * 100}%")
@@ -305,19 +305,19 @@ def comprarCripto():
                 print(f"Ethereum: {float(ethereum):.2f}")
                 print(f"Ripple: {float(ripple):.2f}")
 
-                # registro no extrato
+                
                 datahora = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
-                tipotransacao = "+"  # compra de cripto é uma transação positiva
+                tipotransacao = "+"  
                 cotacao = 0.0
 
                 if cripto == "BTC":
-                    cotacao = cotacao_btc
+                    cotacao = cotacaobtc
                 elif cripto == "ETH":
-                    cotacao = cotacao_eth
+                    cotacao = cotacaoeth
                 elif cripto == "XRP":
-                    cotacao = cotacao_xrp
+                    cotacao = cotacaoxrp
 
-                # cria ou atualiza o arquivo de extrato
+                
                 with open(f"extrato_{CPFbd}.txt", "a") as extrato:
                     extrato.write(f"{datahora} {tipotransacao} {valor_compra:.2f} {cripto} "
                                   f"CT: {cotacao:.2f} TX: {taxa:.2f} REAL: {novosaldo:.2f} "
@@ -335,13 +335,13 @@ def venderCripto():
 
     arquivocotacao = open("cotacao.txt", "r")
     for linha in arquivocotacao:
-        cotacao_btc, cotacao_eth, cotacao_xrp = linha.strip().split(",")
+        cotacaobtc, cotacaoeth, cotacaoxrp = linha.strip().split(",")
 
-    cotacao_btc = float(cotacao_btc)
-    cotacao_eth = float(cotacao_eth)
-    cotacao_xrp = float(cotacao_xrp)
+    cotacaobtc = float(cotacaobtc)
+    cotacaoeth = float(cotacaoeth)
+    cotacaoxrp = float(cotacaoxrp)
 
-    print(f"Cotações:\nBTC: {cotacao_btc} REAL\nETH: {cotacao_eth} REAL\nXRP: {cotacao_xrp} REAL")
+    print(f"Cotações:\nBTC: {cotacaobtc} REAL\nETH: {cotacaoeth} REAL\nXRP: {cotacaoxrp} REAL")
 
     cripto = input("Qual criptomoeda deseja vender? (BTC/ETH/XRP): ").upper()
     if cripto not in ["BTC", "ETH", "XRP"]:
@@ -350,7 +350,7 @@ def venderCripto():
 
     valor_venda = float(input("Digite o valor em reais que deseja vender: "))
     
-    taxa = 0.02  # 2% de taxa de venda
+    taxa = 0.02
     valor_final = valor_venda - (valor_venda * taxa)
 
     with open("bd.txt", "r") as bd:
@@ -361,30 +361,30 @@ def venderCripto():
             CPFbd, nome, senhabd, reais, bitcoin, ethereum, ripple = linha.strip().split(",")
 
             if CPFbd == usuariologado["CPF"]:
-                if cripto == "BTC" and float(bitcoin) * cotacao_btc < valor_venda:
+                if cripto == "BTC" and float(bitcoin) * cotacaobtc < valor_venda:
                     print("Saldo insuficiente em BTC.")
                     for linha in linhas:
                         bd.write(linha)
                     return
-                elif cripto == "ETH" and float(ethereum) * cotacao_eth < valor_venda:
+                elif cripto == "ETH" and float(ethereum) * cotacaoeth < valor_venda:
                     print("Saldo insuficiente em ETH.")
                     for linha in linhas:
                         bd.write(linha)
                     return
-                elif cripto == "XRP" and float(ripple) * cotacao_xrp < valor_venda:
+                elif cripto == "XRP" and float(ripple) * cotacaoxrp < valor_venda:
                     print("Saldo insuficiente em XRP.")
                     for linha in linhas:
                         bd.write(linha)
                     return
 
-                # atualiza saldo e criptomoeda
+                
                 novosaldo = float(reais) + valor_final
                 if cripto == "BTC":
-                    bitcoin = float(bitcoin) - (valor_venda / cotacao_btc)
+                    bitcoin = float(bitcoin) - (valor_venda / cotacaobtc)
                 elif cripto == "ETH":
-                    ethereum = float(ethereum) - (valor_venda / cotacao_eth)
+                    ethereum = float(ethereum) - (valor_venda / cotacaoeth)
                 elif cripto == "XRP":
-                    ripple = float(ripple) - (valor_venda / cotacao_xrp)
+                    ripple = float(ripple) - (valor_venda / cotacaoxrp)
 
                 bd.write(f"{CPFbd},{nome},{senhabd},{novosaldo},{bitcoin},{ethereum},{ripple}\n")
                 print(f"Venda realizada com sucesso. Taxa aplicada: {taxa * 100}%")
@@ -396,18 +396,18 @@ def venderCripto():
                 print(f"Ethereum: {float(ethereum):.2f}")
                 print(f"Ripple: {float(ripple):.2f}")
 
-                # registro no extrato
+                
                 datahora = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
-                tipotransacao = "-"  # venda é uma transação negativa
+                tipotransacao = "-" 
 
                 if cripto == "BTC":
-                    cotacao = cotacao_btc
+                    cotacao = cotacaobtc
                 elif cripto == "ETH":
-                    cotacao = cotacao_eth
+                    cotacao = cotacaoeth
                 elif cripto == "XRP":
-                    cotacao = cotacao_xrp
+                    cotacao = cotacaoxrp
 
-                # cria ou atualiza o arquivo de extrato
+                
                 with open(f"extrato_{CPFbd}.txt", "a") as extrato:
                     extrato.write(f"{datahora} {tipotransacao} {valor_venda:.2f} {cripto} "
                                   f"CT: {cotacao:.2f} TX: {taxa:.2f} REAL: {novosaldo:.2f} "
@@ -427,23 +427,23 @@ def atualizarCotacao():
 
     cotacaobtcmax = cotacaobtc+cotacaobtc*0.05
     cotacaobtcmin = cotacaobtc-cotacaobtc*0.05
-    novacotacao_btc = round(uniform(cotacaobtcmin,cotacaobtcmax),2)
+    novacotacaobtc = round(uniform(cotacaobtcmin,cotacaobtcmax),2)
 
     cotacaoethmax = cotacaoeth+cotacaoeth*0.05
     cotacaoethmin = cotacaoeth-cotacaoeth*0.05
-    novacotacao_eth = round(uniform(cotacaoethmin,cotacaoethmax),2)
+    novacotacaoeth = round(uniform(cotacaoethmin,cotacaoethmax),2)
 
     cotacaoxrpmax = cotacaoxrp+cotacaoxrp*0.05
     cotacaoxrpmin = cotacaoxrp-cotacaoxrp*0.05
-    novacotacao_xrp = round(uniform(cotacaoxrpmin,cotacaoxrpmax),2)
+    novacotacaoxrp = round(uniform(cotacaoxrpmin,cotacaoxrpmax),2)
 
     with open(f"cotacao.txt", "w") as cotacao:
-        cotacao.write(f"{novacotacao_btc},{novacotacao_eth},{novacotacao_xrp}")
+        cotacao.write(f"{novacotacaobtc},{novacotacaoeth},{novacotacaoxrp}")
 
     print(f"Cotações atualizadas:\n")
-    print(f"BTC: {novacotacao_btc} REAL")
-    print(f"ETH: {novacotacao_eth} REAL")
-    print(f"XRP: {novacotacao_xrp} REAL")
+    print(f"BTC: {novacotacaobtc} REAL")
+    print(f"ETH: {novacotacaoeth} REAL")
+    print(f"XRP: {novacotacaoxrp} REAL")
 
 
 
